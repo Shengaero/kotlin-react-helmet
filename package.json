@@ -1,0 +1,45 @@
+{
+  "name": "kotlin-react-helmet",
+  "version": "1.0.0",
+  "description": "A kotlin wrapper for react-helmet",
+  "main": "kotlin-react-helmet.js",
+  "author": "Kaidan Gustave",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/Shengaero/kotlin-react-helmet#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shengaero/kotlin-react-helmet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Shengaero/kotlin-react-helmet/issues"
+  },
+  "keywords": [
+    "kotlin",
+    "kotlin2js",
+    "kotlin-react",
+    "react",
+    "react-helmet"
+  ],
+  "dependencies": {
+    "react-helmet": "^5.2.0"
+  },
+  "devDependencies": {
+    "jsdom": "^11.11.0",
+    "kotlin": "^1.2.51",
+    "mocha": "^5.2.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1"
+  },
+  "peerDependencies": {
+    "kotlin": "^1.2.51"
+  },
+  "files": [
+    "**/**/*.kjsm",
+    "*.js",
+    "*.js.map",
+    "*.meta.js",
+    "LICENSE",
+    "package.json",
+    "README.md"
+  ]
+}

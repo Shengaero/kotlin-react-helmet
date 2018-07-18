@@ -1,0 +1,265 @@
+/*
+ * Copyright 2018 Kaidan Gustave
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+buildscript {
+    ext {
+        kotlin_version = '1.2.51'
+        kotlin_wrappers_version = '16.4.1-pre.34-kotlin-1.2.50'
+        node_plugin_version = '1.2.0'
+        shadow_version = '2.0.1'
+        versions_version = '0.17.0'
+        bintray_version = '1.7.3'
+    }
+
+    repositories {
+        jcenter()
+        maven { url = "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.github.jengelman.gradle.plugins:shadow:$shadow_version"
+        classpath "com.moowork.gradle:gradle-node-plugin:$node_plugin_version"
+        classpath "com.github.ben-manes:gradle-versions-plugin:$versions_version"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintray_version"
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'kotlin2js'
+apply plugin: 'maven-publish'
+apply plugin: 'com.moowork.node'
+apply plugin: 'com.jfrog.bintray'
+
+project.ext.npmBuildDir = 'build/npm'
+
+group = 'me.kgustave'
+version = '1.0.0'
+
+// normal gradle dependency management
+
+sourceSets {
+    test.kotlin.srcDirs += 'src/test/kotlin'
+    test {
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+    }
+}
+
+repositories {
+    jcenter()
+    maven { url = "https://kotlin.bintray.com/kotlin-js-wrappers" }
+}
+
+dependencies {
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    compileOnly "org.jetbrains:kotlin-react:$kotlin_wrappers_version"
+    compileOnly "org.jetbrains:kotlin-react-dom:$kotlin_wrappers_version"
+
+    testCompile "org.jetbrains:kotlin-mocha:3.0.1-pre.34-kotlin-1.2.50"
+    testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+}
+
+// npm install functionality
+
+void install(String dependency, boolean dev = false) {
+    def formattedTaskName = dependency.split('-').collect { it.capitalize() }.join('')
+    def t = tasks.create("npmInstall$formattedTaskName", NpmTask) {
+        group = 'npm'
+        description = "Installs $dependency"
+        args = ['install', dev? '--save-dev' : '--save', dependency]
+    }
+
+    npmInstall {
+        dependsOn t
+    }
+}
+
+// dependencies
+install('react-helmet')
+
+// dev dependencies
+install('kotlin', true)
+install('react', true)
+install('react-dom', true)
+install('mocha', true)
+install('jsdom', true)
+
+// kotlin build
+
+[compileKotlin2Js, compileTestKotlin2Js]*.configure {
+    kotlinOptions {
+        main = 'noCall'
+        moduleKind = 'commonjs'
+        noStdlib = true
+        metaInfo = true
+        typedArrays = true
+        sourceMap = true
+        sourceMapEmbedSources = 'always'
+    }
+}
+
+jar {
+    baseName = project.name
+    version = "$project.version"
+    classifier = ''
+    manifest {
+        attributes 'Automatic-Module-Name': project.name.replaceAll('-', '.'),
+                   'Implementation-Version': "$project.version",
+                   'Implementation-Title': project.name
+    }
+}
+
+task sourcesJar(type: Jar) {
+    group = 'build'
+    description = 'Generates a sources jar'
+
+    baseName = project.name
+    version = "$project.version"
+    classifier = 'sources'
+    from { sourceSets.main.allSource }
+}
+
+// npm build
+
+node {
+    download = false
+    def npm = file("${project.buildDir}/npm")
+    if(!npm.exists()) npm.mkdirs()
+    npmWorkDir = npm
+}
+
+task npmBuild(type: Copy, dependsOn: compileKotlin2Js) {
+    group = 'npm'
+    from 'build/classes/kotlin/main'
+    into npmBuildDir
+}
+
+void copyNpmFile(String file, String name = file.toLowerCase().capitalize()) {
+    def t = tasks.create("copy$name", Copy) {
+        group = 'npm'
+        into npmBuildDir
+        from '.'
+        include file
+    }
+
+    npmBuild {
+        dependsOn t
+    }
+}
+
+copyNpmFile('CHANGELOG.md', 'Changelog')
+copyNpmFile('README.md', 'Readme')
+copyNpmFile('LICENSE')
+copyNpmFile('package.json', 'PackageJson')
+
+build {
+    dependsOn clean
+    dependsOn npmBuild
+    dependsOn jar
+    dependsOn sourcesJar
+
+    npmBuild.mustRunAfter clean
+    jar.mustRunAfter npmBuild
+    sourcesJar.mustRunAfter jar
+}
+
+// test organization
+
+task populateTestModules(type: Copy, dependsOn: compileTestKotlin2Js) {
+    //noinspection GroovyAssignabilityCheck
+    from compileKotlin2Js.destinationDir
+
+    (configurations.testCompile + configurations.compileOnly).each {
+        from zipTree(it.absolutePath).matching {
+            include '*.js'
+            include '*.js.map'
+        }
+    }
+
+    into "${project.buildDir}/node_modules"
+}
+
+task runMocha(type: NodeTask, dependsOn: [compileTestKotlin2Js, populateTestModules]) {
+    script = file('node_modules/mocha/bin/mocha')
+    args = [compileTestKotlin2Js.outputFile]
+}
+
+test {
+    dependsOn runMocha
+}
+
+// publishing
+
+bintray {
+    def keysFile = rootProject.file("keys/keys.properties")
+    if(keysFile.exists()) {
+        def keys = new Properties()
+        keysFile.withReader { keys.load(it) }
+        user = keys['bintray.user.name']
+        key = keys['bintray.api.key']
+    }
+
+    publications = ['BintrayRelease']
+    publish = true
+
+    pkg {
+        repo = 'maven'
+        name = project.name
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/Shengaero/kotlin-react-helmet.git'
+        githubRepo = 'https://github.com/Shengaero/kotlin-react-helmet/'
+        version {
+            name = project.version
+            released = new Date()
+        }
+    }
+}
+
+npm_publish {
+    group = 'publishing'
+
+    dependsOn build
+
+    args = ['--access', 'public']
+    execOverrides {
+        it.workingDir = npmBuildDir
+    }
+}
+
+publishing {
+    publications {
+        BintrayRelease(MavenPublication) {
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+
+            from project.components.java
+
+            artifact project.tasks.sourcesJar
+        }
+    }
+}
+
+task publishFullRelease {
+    group = 'publishing'
+
+    dependsOn build
+    dependsOn bintrayUpload
+    dependsOn npm_publish
+
+    bintrayUpload.mustRunAfter build
+    npm_publish.mustRunAfter build
+}

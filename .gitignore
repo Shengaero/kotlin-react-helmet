@@ -1,0 +1,40 @@
+### Intellij Project ###
+
+# Output Directory
+/out/
+
+# IDEA Configurations
+/.idea/
+
+### Gradle ###
+
+# Build Directory
+/build/
+
+# Cache
+/.gradle/
+
+# Specify that certain gradle files should always be committed
+!/gradle/wrapper/
+!build.gradle
+!gradlew
+!gradlew.bat
+!settings.gradle
+
+### NPM ###
+
+# Node Modules
+/node_modules/
+
+# package and lock should always be committed
+!package.json
+!package-lock.json
+
+### Misc ###
+
+# Publications Upload Keys
+/keys/
+
+# Commit GitHub Repo Stuff
+!LICENSE
+!README.md
