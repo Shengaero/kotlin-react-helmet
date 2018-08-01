@@ -16,57 +16,64 @@
 @file:Suppress("unused")
 package react.helmet.tests
 
-import kotlinx.html.html
-import react.helmet.helmet
-import react.helmet.tests.utils.createDOM
-import org.w3c.dom.Element
-import react.buildElement
-import react.buildElements
-import react.dom.render
-import react.dom.unmountComponentAtNode
-import kotlin.test.*
+// Deprecated testing unit.
+// kotlin.test, it's not smart enough, seriously.
+// I cannot use javascript unit testing features that are so well recognized
+//in the javascript ecosystem, it just doesn't work, and it probably never will tbh.
 
-// FIXME These tests are very inconsistent, and require
-// some actual server code to actually test.
-@Ignore
-class HelmetTests {
-    private val dom = createDOM { html {} }
-    private val window get() = dom.window
-    private val document get() = window.document
-
-    private val container = document.createElement("div")
-    private var headElement = null as Element?
-
-    @BeforeTest fun resetHead() {
-        headElement = headElement ?: document.head
-            ?: checkNotNull(document.querySelector("head"))
-
-        headElement?.innerHTML = ""
-    }
-
-    @AfterTest fun unmount() {
-        unmountComponentAtNode(container)
-    }
-
-    @Test fun updatesPageTitle() {
-        render(buildElement {
-            helmet(title = "Test Title")
-        }, container)
-
-        window.requestAnimationFrame {
-            assertEquals("Test Title", document.title)
-        }
-    }
-
-    @Test fun updatesPageWithMultipleChildren() {
-        render(buildElements {
-            helmet(title = "Test Title")
-            helmet(title = "Child One Title")
-            helmet(title = "Child Two Title")
-        }, container)
-
-        window.requestAnimationFrame {
-            assertEquals("Child Two Title", document.title)
-        }
-    }
-}
+//import jest.expect
+//import jest.invoke
+//import jest.toBe
+//import org.w3c.dom.Element
+//import react.buildElement
+//import react.buildElements
+//import react.dom.render
+//import react.dom.unmountComponentAtNode
+//import react.helmet.helmet
+//import kotlin.browser.document
+//import kotlin.browser.window
+//import kotlin.test.AfterTest
+//import kotlin.test.BeforeTest
+//import kotlin.test.Ignore
+//import kotlin.test.Test
+//
+//@Ignore
+//class HelmetTests {
+//    private val container = document.createElement("div")
+//    private var headElement = null as Element?
+//
+//    @BeforeTest fun resetHead() {
+//        headElement = headElement ?: document.head
+//            ?: checkNotNull(document.querySelector("head"))
+//
+//        headElement?.innerHTML = ""
+//    }
+//
+//    @AfterTest fun unmount() {
+//        unmountComponentAtNode(container)
+//    }
+//
+//    @Test fun updatesPageTitle() {
+//        render(buildElement {
+//            helmet(title = "Test Title")
+//        }, container)
+//
+//        window.requestAnimationFrame {
+//            expect(document.title) toBe "Test Title"
+//            println("test")
+//        }
+//    }
+//
+//    @Test fun updatesPageCorrectlyWithMultipleHelmets() {
+//        render(buildElements {
+//            helmet(title = "Test Title")
+//            helmet(title = "Child One Title")
+//            helmet(title = "Child Two Title")
+//        }, container)
+//
+//        window.requestAnimationFrame {
+//            expect(document.title) toBe "Child Two Title"
+//            println("test2")
+//        }
+//    }
+//}

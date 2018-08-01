@@ -1,6 +1,6 @@
 {
   "name": "kotlin-react-helmet",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A kotlin wrapper for react-helmet",
   "main": "kotlin-react-helmet.js",
   "author": "Kaidan Gustave",
@@ -24,9 +24,10 @@
     "react-helmet": "^5.2.0"
   },
   "devDependencies": {
-    "jsdom": "^11.11.0",
+    "jest": "^23.4.2",
+    "jest-html-reporter": "^2.4.2",
+    "jsdom": "^11.12.0",
     "kotlin": "^1.2.51",
-    "mocha": "^5.2.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1"
   },
@@ -41,5 +42,26 @@
     "LICENSE",
     "package.json",
     "README.md"
-  ]
+  ],
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "roots": ["<rootDir>/build/classes/kotlin/test/"],
+    "testMatch": ["**/kotlin-react-helmet_test.js"],
+    "modulePaths": ["/build/node_modules/"],
+    "reporters": [
+      "default",
+      ["./node_modules/jest-html-reporter", {
+        "pageTitle": "Tests for kotlin-react-helmet",
+        "outputPath": "./build/reports/jest/index.html",
+        "theme": "darkTheme",
+        "includeConsoleLog": true
+      }]
+    ],
+    "testURL": "http://localhost/",
+    "browser": true,
+    "verbose": true,
+    "testEnvironment": "jsdom"
+  }
 }

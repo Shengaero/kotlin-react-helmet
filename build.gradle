@@ -16,7 +16,7 @@
 buildscript {
     ext {
         kotlin_version = '1.2.51'
-        kotlin_wrappers_version = '16.4.1-pre.34-kotlin-1.2.50'
+        kotlin_wrappers_version = '16.4.1-pre.34-kotlin-1.2.51'
         node_plugin_version = '1.2.0'
         shadow_version = '2.0.1'
         versions_version = '0.17.0'
@@ -46,7 +46,7 @@ apply plugin: 'com.jfrog.bintray'
 project.ext.npmBuildDir = 'build/npm'
 
 group = 'me.kgustave'
-version = '1.0.0'
+version = '1.1.0'
 
 // normal gradle dependency management
 
@@ -68,7 +68,6 @@ dependencies {
     compileOnly "org.jetbrains:kotlin-react:$kotlin_wrappers_version"
     compileOnly "org.jetbrains:kotlin-react-dom:$kotlin_wrappers_version"
 
-    testCompile "org.jetbrains:kotlin-mocha:3.0.1-pre.34-kotlin-1.2.50"
     testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
 }
 
@@ -94,20 +93,32 @@ install('react-helmet')
 install('kotlin', true)
 install('react', true)
 install('react-dom', true)
-install('mocha', true)
+install('jest', true)
+install('jest-html-reporter', true)
 install('jsdom', true)
 
 // kotlin build
 
 [compileKotlin2Js, compileTestKotlin2Js]*.configure {
     kotlinOptions {
-        main = 'noCall'
         moduleKind = 'commonjs'
         noStdlib = true
         metaInfo = true
         typedArrays = true
         sourceMap = true
         sourceMapEmbedSources = 'always'
+    }
+}
+
+compileKotlin2Js {
+    kotlinOptions {
+        main = 'noCall'
+    }
+}
+
+compileTestKotlin2Js {
+    kotlinOptions {
+        main = 'react.helmet.tests.TestKt'
     }
 }
 
@@ -192,16 +203,19 @@ task populateTestModules(type: Copy, dependsOn: compileTestKotlin2Js) {
     into "${project.buildDir}/node_modules"
 }
 
-task runMocha(type: NodeTask, dependsOn: [compileTestKotlin2Js, populateTestModules]) {
-    script = file('node_modules/mocha/bin/mocha')
-    args = [compileTestKotlin2Js.outputFile]
-}
-
-test {
-    dependsOn runMocha
+task runJest(type: NodeTask, dependsOn: [compileTestKotlin2Js, populateTestModules]) {
+    script = file('node_modules/jest/bin/jest')
+    args = [projectDir.toURI().relativize(compileTestKotlin2Js.outputFile.toURI())]
 }
 
 // publishing
+
+task buildForRelease(dependsOn: [build, runJest]) {
+    group = 'publishing'
+    description = 'Builds the project for release'
+
+    runJest.mustRunAfter build
+}
 
 bintray {
     def keysFile = rootProject.file("keys/keys.properties")
@@ -231,8 +245,6 @@ bintray {
 npm_publish {
     group = 'publishing'
 
-    dependsOn build
-
     args = ['--access', 'public']
     execOverrides {
         it.workingDir = npmBuildDir
@@ -255,11 +267,12 @@ publishing {
 
 task publishFullRelease {
     group = 'publishing'
+    description = 'Releases a version'
 
-    dependsOn build
+    dependsOn buildForRelease
     dependsOn bintrayUpload
     dependsOn npm_publish
 
-    bintrayUpload.mustRunAfter build
-    npm_publish.mustRunAfter build
+    bintrayUpload.mustRunAfter buildForRelease
+    npm_publish.mustRunAfter buildForRelease
 }

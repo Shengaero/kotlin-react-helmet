@@ -18,19 +18,19 @@ kotlin-react-helmet uses the same DSL provided by [kotlin-react](https://github.
 and simply extends upon it in order to provide the functionality one might expect from the original react-helmet library:
 
 ```kotlin
-fun RBuilder.app() {
-    h1 { + "Hello, World!" }
-    helmet {
-        title { + "Hello from kotlin-react-helmet!" }
+fun main(args: Array<String>) {
+    render(document.getElementById("root")) {
+        helmet(title = "Hello from kotlin-react-helmet!")
+        h1 { + "Hello, World!" }
     }
 }
 ```
 
-When rendered into a typical example template, the following will be produced:
+When rendered into a typical starter template, the following will be produced:
 ```html
 <html>
   <head>
-    <title>Hello from kotlin-react-helmet!"</title>
+    <title>Hello from kotlin-react-helmet!</title>
   </head>
   <body>
     <div id="root">
@@ -40,10 +40,11 @@ When rendered into a typical example template, the following will be produced:
 </html>
 ```
 
-For more info on how react-helmet works, see their
-[github repo's readme](https://github.com/nfl/react-helmet/blob/master/README.md)
+For more info on how react-helmet works, see their [github repo's readme](https://github.com/nfl/react-helmet/blob/master/README.md)
 
 ## Installation
+
+#### With NPM
 
 `npm i kotlin-react-helmet`
 
@@ -51,6 +52,18 @@ If you are using Intellij IDEA and [`create-react-kotlin-app`](https://github.co
 you can run the following to have your IDE resolve the library:
 
 `npm run gen-idea-libs`
+
+#### With Gradle
+
+```gradle
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "me.kgustave:kotlin-react-helmet:$kotlinReactHelmetVersion"
+}
+```
 
 ## License
 

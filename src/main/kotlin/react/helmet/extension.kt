@@ -15,17 +15,38 @@
  */
 package react.helmet
 
+import org.w3c.dom.Element
 import react.RBuilder
-import react.RElementBuilder
+import react.RHandler
+import kotlin.js.Json
+
+fun RBuilder.helmet(block: RHandler<HelmetProps>) = child(Helmet::class, block)
 
 fun RBuilder.helmet(
     title: String? = null,
     defaultTitle: String? = null,
-    block: RElementBuilder<HelmetProps>.() -> Unit = {}
+    titleTemplate: String? = null,
+    titleAttributes: Json? = null,
+    block: RHandler<HelmetProps> = {}
 ) = child(Helmet::class) {
     attrs {
         title?.let { this.title = it }
         defaultTitle?.let { this.defaultTitle = it }
+        titleTemplate?.let { this.titleTemplate = it }
+        titleAttributes?.let { this.titleAttributes = it }
     }
     block()
 }
+
+/**
+ * Sets a callback that tracks DOM changes.
+ */
+inline fun HelmetProps.onChangeClientState(noinline handle: (Any) -> Unit) {
+    this.asDynamic().onChangeClientState = handle
+}
+
+/**
+ * `true` if this [Element] is created by the rendering of
+ * a [helmet] into the DOM tree.
+ */
+inline val Element.hasHelmetAttribute get() = hasAttribute("data-react-helmet")
