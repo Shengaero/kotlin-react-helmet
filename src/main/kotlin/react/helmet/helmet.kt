@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("unused")
 @file:JsModule("react-helmet")
+@file:Suppress("unused")
 package react.helmet
 
 import react.Component
+import react.RClass
 import react.RProps
 import react.RState
 import kotlin.js.Json
@@ -127,6 +128,28 @@ external interface HelmetHTMLElementDatum {
     override fun toString(): String
 }
 
+@JsName("Helmet")
+external val helmet: RClass<HelmetProps>
+
+@JsName("canUseDOM")
+external val helmetCanUseDOM: Boolean
+
+@JsName("peek")
+external fun peekHelmet(): HelmetData
+
+@JsName("rewind")
+external fun rewindHelmet(): HelmetData
+
+@JsName("renderStatic")
+external fun renderStaticHelmet(): HelmetData
+
+// Deprecated
+
+@Deprecated(
+    "Will be removed in a later version of kotlin-react-helmet for better internal naming! " +
+    "Use the 'helmet' RClass if you wish to use kotlin-react-helmet!",
+    level = DeprecationLevel.ERROR
+)
 external class Helmet: Component<HelmetProps, RState> {
     override fun render(): dynamic
 
@@ -138,7 +161,15 @@ external class Helmet: Component<HelmetProps, RState> {
     }
 }
 
+@Deprecated("Renamed to helmetCanUseDOM",
+    ReplaceWith("helmetCanUseDOM", imports = ["react.helmet.helmetCanUseDOM"]))
 external val canUseDOM: Boolean
+@Deprecated("Renamed to peekHelmet",
+    ReplaceWith("peekHelmet()", imports = ["react.helmet.peekHelmet"]))
 external fun peek(): HelmetData
+@Deprecated("Renamed to rewindHelmet",
+    ReplaceWith("rewindHelmet()", imports = ["react.helmet.rewindHelmet"]))
 external fun rewind(): HelmetData
+@Deprecated("Renamed to renderStaticHelmet",
+    ReplaceWith("renderStaticHelmet()", imports = ["react.helmet.renderStaticHelmet"]))
 external fun renderStatic(): HelmetData

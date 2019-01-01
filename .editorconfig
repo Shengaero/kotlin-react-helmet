@@ -3,16 +3,22 @@ root = true
 [*]
 charset = utf-8
 
-[*.{kt, gradle}]
+[src/**/*.{kt, gradle}]
 insert_final_newline = true
 trim_trailing_whitespace = true
 indent_style = space
 end_of_line = lf
 indent_size = 4
 
-[package.json]
-insert_final_newline = false
+[**/*.{kts, js, json}]
+insert_final_newline = true
 trim_trailing_whitespace = true
 indent_style = space
 end_of_line = lf
 indent_size = 2
+
+[**/*.properties]
+insert_final_newline = false
+
+[gradlew]
+end_of_line = lf

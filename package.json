@@ -1,18 +1,9 @@
 {
   "name": "kotlin-react-helmet",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A kotlin wrapper for react-helmet",
-  "main": "kotlin-react-helmet.js",
-  "author": "Kaidan Gustave",
-  "license": "Apache-2.0",
   "homepage": "https://github.com/Shengaero/kotlin-react-helmet#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Shengaero/kotlin-react-helmet.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Shengaero/kotlin-react-helmet/issues"
-  },
+  "main": "kotlin-react-helmet.js",
   "keywords": [
     "kotlin",
     "kotlin2js",
@@ -20,19 +11,56 @@
     "react",
     "react-helmet"
   ],
-  "dependencies": {
-    "react-helmet": "^5.2.0"
+  "author": {
+    "name": "Kaidan Gustave",
+    "email": "kaidangustave@yahoo.com",
+    "url": "https://kgustave.me/"
+  },
+  "bugs": {
+    "url": "https://github.com/Shengaero/kotlin-react-helmet/issues"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shengaero/kotlin-react-helmet.git"
   },
   "devDependencies": {
-    "jest": "^23.4.2",
-    "jest-html-reporter": "^2.4.2",
-    "jsdom": "^11.12.0",
-    "kotlin": "^1.2.51",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "@jetbrains/kotlin-extensions": "1.0.1-pre.61",
+    "@jetbrains/kotlin-react": "16.6.0-pre.61",
+    "@jetbrains/kotlin-react-dom": "16.6.0-pre.61",
+    "core-js": "2.5.7",
+    "kotlin": "1.3.11",
+    "react": "16.6.0",
+    "react-dom": "16.6.0",
+    "react-helmet": "5.2.0",
+    "babelify": "8",
+    "babel-core": "6",
+    "browserify": ">=10 <17",
+    "chai": "^4.2.0",
+    "karma": "^3.1.4",
+    "karma-chai": "^0.1.0",
+    "karma-coverage": "^1.1.1",
+    "karma-babel-preprocessor": "^7.0.0",
+    "karma-browserify": "^6.0.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-html-reporter": "^0.2.7",
+    "karma-mocha": "^1.3.0",
+    "kotlin-test": "1.3.11",
+    "kotlinx-coroutines-core": "1.1.0",
+    "lodash": "^4.17.5",
+    "mocha": "^5.2.0",
+    "watchify": ">=3 <4"
   },
   "peerDependencies": {
-    "kotlin": "^1.2.51"
+    "@jetbrains/kotlin-react": "^16.6.0-pre.61",
+    "@jetbrains/kotlin-react-dom": "^16.6.0-pre.61",
+    "kotlin": "^1.3.11",
+    "react-helmet": "^5.2.0"
+  },
+  "scripts": {
+    "test": "karma start karma/build.karma.config.js",
+    "test:watch": "karma start karma/continuous.karma.config.js"
   },
   "files": [
     "**/**/*.kjsm",
@@ -42,26 +70,5 @@
     "LICENSE",
     "package.json",
     "README.md"
-  ],
-  "scripts": {
-    "test": "jest"
-  },
-  "jest": {
-    "roots": ["<rootDir>/build/classes/kotlin/test/"],
-    "testMatch": ["**/kotlin-react-helmet_test.js"],
-    "modulePaths": ["/build/node_modules/"],
-    "reporters": [
-      "default",
-      ["./node_modules/jest-html-reporter", {
-        "pageTitle": "Tests for kotlin-react-helmet",
-        "outputPath": "./build/reports/jest/index.html",
-        "theme": "darkTheme",
-        "includeConsoleLog": true
-      }]
-    ],
-    "testURL": "http://localhost/",
-    "browser": true,
-    "verbose": true,
-    "testEnvironment": "jsdom"
-  }
+  ]
 }

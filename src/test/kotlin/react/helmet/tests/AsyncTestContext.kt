@@ -13,13 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pluginManagement {
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.id == "kotlin2js") {
-                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
-            }
-        }
-    }
+package react.helmet.tests
+
+interface AsyncTestContext {
+    fun done(t: Throwable? = null)
 }
-rootProject.name = 'kotlin-react-helmet'

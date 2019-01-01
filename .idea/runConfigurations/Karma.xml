@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Karma" type="CompoundRunConfigurationType">
+    <toRun name="Watch Test Kotlin2Js" type="GradleRunConfiguration" />
+    <toRun name="Run Karma" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>

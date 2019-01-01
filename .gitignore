@@ -1,28 +1,40 @@
-### Intellij Project ###
+### Editors ###
 
-# Output Directory
+### Common
+.DS_STORE
+
+### Intellij
+# IDEA configurations
+*.iml
+*.ipr
+*.iws
+.idea/**
+
+# Make sure to commit run configurations and vcs configurations
+!.idea/runConfigurations
+!.idea/runConfigurations/*.xml
+!.idea/vcs.xml
+
+# IDEA output directory
 /out/
 
-# IDEA Configurations
-/.idea/
+### Build Tools ###
 
-### Gradle ###
+### Gradle
+# Cache
+.gradle/
 
 # Build Directory
-/build/
-
-# Cache
-/.gradle/
+build/
 
 # Specify that certain gradle files should always be committed
-!/gradle/wrapper/
-!build.gradle
+!gradle/wrapper/
+!build.old.gradle
 !gradlew
 !gradlew.bat
-!settings.gradle
+!settings.gradle.kts
 
-### NPM ###
-
+### NodeJS
 # Node Modules
 /node_modules/
 
@@ -30,10 +42,12 @@
 !package.json
 !package-lock.json
 
+
+
 ### Misc ###
 
 # Publications Upload Keys
-/keys/
+/gradle/bintray.properties
 
 # Commit GitHub Repo Stuff
 !LICENSE
