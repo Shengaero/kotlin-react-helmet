@@ -166,8 +166,8 @@ tasks {
   }
 
   jar {
-    baseName = project.name
-    version = "${project.version}"
+    baseName = "kotlin-react-helmet"
+    version = "1.2.0"
     classifier = ""
     manifest {
       attributes(
@@ -182,8 +182,8 @@ tasks {
     group = "build"
     description = "Generates a sources jar"
 
-    baseName = project.name
-    version = "${project.version}"
+    baseName = "kotlin-react-helmet"
+    version = "1.2.0"
     classifier = "sources"
 
     with(kotlin.sourceSets["main"]) {
@@ -271,11 +271,11 @@ tasks {
     description = "Releases a version"
 
     dependsOn(build)
-    dependsOn(bintrayUpload)
+    dependsOn(bintrayPublish)
     dependsOn(npmPublish)
 
-    bintrayUpload.get().mustRunAfter(build)
-    npmPublish.mustRunAfter(bintrayUpload)
+    bintrayPublish.get().mustRunAfter(build)
+    npmPublish.mustRunAfter(bintrayPublish)
   }
 }
 
@@ -300,7 +300,7 @@ bintray {
     publicDownloadNumbers = true
     version.apply {
       name = "${project.version}"
-      released = OffsetDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+//      released = OffsetDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     }
   }
 }
